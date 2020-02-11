@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:34:06 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 15:41:24 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 18:28:21 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,7 @@ static t_blk	*new_blk(int type, size_t size)
 	new->block_type = type;
 	new->size = size;
 	new->available = size - sizeof(*new) - sizeof(t_mlc);
-	new->first_free = (t_mlc*)((void*)new + sizeof(*new));
-	new->wilderness = new->first_free;
+	new->wilderness = (t_mlc*)((void*)new + sizeof(*new));
 	return (new);
 }
 
