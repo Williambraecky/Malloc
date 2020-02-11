@@ -1,35 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ft_memcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/02/11 16:24:03 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 23:18:25 by wbraeckm         ###   ########.fr       */
+/*   Created: 2018/06/12 10:05:57 by wbraeckm          #+#    #+#             */
+/*   Updated: 2020/02/11 22:42:46 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/malloc.h"
-#include <stdio.h>
+#include "malloc.h"
 
-/*
-** NOTE: DYLD_LIBRARY_PATH to compile
-*/
-
-int		main(void)
+void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
-	void	*ptr;
-	void	*ptr2;
-	size_t	i;
+	char	*c_dst;
+	char	*c_src;
 
-	ptr = malloc(16);
-	ptr2 = malloc(96);
-	show_alloc_mem();
-	ptr2 = realloc(ptr2, 63);
-	ptr = malloc(16);
-	ptr = malloc(16);
-	ptr = malloc(16);
-	write(1, "\n\n", 2);
-	show_alloc_mem();
+	c_dst = (char *)dst;
+	c_src = (char *)src;
+	while (n--)
+		*c_dst++ = *c_src++;
+	return (dst);
 }

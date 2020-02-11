@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:05:32 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 22:29:10 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 22:42:58 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,7 @@ void				malloc_unlock(void);
 int					hash_mlc(t_mlc *mlc);
 int					hash_blk(t_blk *blk);
 void				*ft_memset(void *b, int c, size_t len);
+void				*ft_memcpy(void *dst, const void *src, size_t n);
 size_t				blk_size(int type, size_t size);
 t_blk				*get_blk(int type, size_t size);
 int					get_type(size_t size);

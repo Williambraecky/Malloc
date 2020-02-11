@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:06:44 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 22:28:39 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 23:20:38 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ t_blk	*g_blks = 0;
 **   for the new malloc and another node
 */
 
- void		mlc_segment(t_blk *blk, t_mlc *mlc, size_t size)
+static void		mlc_segment(t_blk *blk, t_mlc *mlc, size_t size)
 {
 	t_mlc		*next;
 	t_mlc		*segment;
@@ -52,7 +52,7 @@ t_blk	*g_blks = 0;
 	}
 }
 
- t_mlc	*check_free_mlc(t_blk *blk, size_t size)
+static t_mlc	*check_free_mlc(t_blk *blk, size_t size)
 {
 	t_mlc	*current;
 	t_mlc	*prev;
@@ -80,7 +80,11 @@ t_blk	*g_blks = 0;
 	return (NULL);
 }
 
- t_mlc	*get_mlc_in_blk(t_blk *blk, size_t size)
+/*
+** TODO: check if we don't go past borders
+*/
+
+static t_mlc	*get_mlc_in_blk(t_blk *blk, size_t size)
 {
 	t_mlc		*mlc;
 
@@ -117,14 +121,14 @@ void			*malloc(size_t size)
 		&& (mlc = get_mlc_in_blk(blk, size)))
 	{
 		malloc_unlock();
-		return (mlc);
+		return ((void*)mlc + sizeof(*mlc));
 	}
 
 	if ((blk = append_new_blk(get_type(size), blk_size(get_type(size), size)))
 		&& (mlc = get_mlc_in_blk(blk, size)))
 	{
 		malloc_unlock();
-		return (mlc);
+		return ((void*)mlc + sizeof(*mlc));
 	}
 	malloc_unlock();
 	return (NULL);
