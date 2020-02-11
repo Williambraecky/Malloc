@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:05:32 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 16:14:44 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 18:11:26 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,13 +63,13 @@ struct			s_blk
 {
 	t_blk		*prev;
 	int			block_type;
+	int			checksum;
 	t_mlc		*wilderness;
 	t_mlc		*last;
 	t_mlc		*first_free;
 	size_t		num_alloc;
 	size_t		size;
 	size_t		available;
-	int			checksum;
 	t_blk		*next;
 };
 
