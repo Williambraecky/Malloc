@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:07:34 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 21:38:04 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 22:08:54 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,11 @@ static void	free_mlc(t_blk *blk, t_mlc *mlc)
 		mlc->next->prev = mlc;
 		mlc->next->checksum = hash_mlc(mlc->next);
 	}
-	if (mlc == blk->last) //TODO: test this
-	{
-		blk->wilderness = mlc;
-		blk->last = mlc->prev;
-	}
+	// if (mlc == blk->last) //TODO: this is incorrect; do we really need to push back wilderness?
+	// {
+	// 	blk->wilderness = mlc;
+	// 	blk->last = mlc->prev;
+	// }
 	add_free_list(blk, mlc);
 }
 
