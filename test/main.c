@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 16:24:03 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 17:38:35 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 18:42:23 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,25 @@ int		main(void)
 {
 	char	*str;
 	char	*str2;
+	void	*safe;
 
-	str = malloc(42);
-	str2 = malloc(13);
+	safe = malloc(16);
+	write(1, "a\n", 2);
+	str = malloc(50);
+	write(1, "b\n", 2);
+	putaddr(str);
+	free(str);
+	str = malloc(10);
+	write(1, "c\n", 2);
+	str2 = malloc(10);
+	write(1, "d\n", 2);
 	putaddr(str);
 	putaddr(str2);
+	write(1, "e\n", 2);
+	free(str);
+	write(1, "f\n", 2);
+	free(str2);
+	write(1, "g\n", 2);
+	free(safe);
+	write(1, "h\n", 2);
 }
