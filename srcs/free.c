@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:07:34 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 22:08:54 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 22:30:59 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,17 +99,22 @@ void		free(void *ptr)
 	t_blk	*blk;
 
 	mlc = ptr - sizeof(t_mlc);
+	malloc_lock();
 	if (mlc->checksum != hash_mlc(mlc))
-		return ;//TODO: indalid checksum error message
+		return malloc_unlock();//TODO: indalid checksum error message
 	if (mlc->in_use == 0)
-		return ;//TODO: double free error message
+		return malloc_unlock();//TODO: double free error message
 	blk = get_blk_from_addr(ptr);
 	if (!blk)
-		return ;//TODO: could not find blk error message
+		return malloc_unlock();//TODO: could not find blk error message
 	blk->num_alloc--;
 	if (!blk->num_alloc)
-		return (unmap_blk(blk));
+	{
+		unmap_blk(blk);
+		return (malloc_unlock());
+	}
 	blk->available += mlc_size(mlc);
 	free_mlc(blk, mlc);
 	mlc->in_use = 0;
+	malloc_unlock();
 }

@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:06:44 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 21:35:45 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 22:28:39 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,13 +112,20 @@ void			*malloc(size_t size)
 	t_blk	*blk;
 	t_mlc	*mlc;
 
-	if (!(blk = get_blk(get_type(size), size)))
-		return (NULL);
-	if ((mlc = get_mlc_in_blk(blk, size)))
-		return (((void*)mlc) + sizeof(*mlc));
-	if (!(blk = append_new_blk(get_type(size), blk_size(get_type(size), size))))
-		return (NULL);
-	if ((mlc = get_mlc_in_blk(blk, size)))
-		return (((void*)mlc) + sizeof(*mlc));
+	malloc_lock();
+	if ((blk = get_blk(get_type(size), size))
+		&& (mlc = get_mlc_in_blk(blk, size)))
+	{
+		malloc_unlock();
+		return (mlc);
+	}
+
+	if ((blk = append_new_blk(get_type(size), blk_size(get_type(size), size)))
+		&& (mlc = get_mlc_in_blk(blk, size)))
+	{
+		malloc_unlock();
+		return (mlc);
+	}
+	malloc_unlock();
 	return (NULL);
 }
