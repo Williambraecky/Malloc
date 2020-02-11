@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:34:06 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 18:28:21 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 21:59:25 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ static t_blk	*find_blk(int type, size_t size)
 	{
 		if (curr->block_type == type && size < curr->available)
 			return (curr);
+		curr = curr->next;
 	}
 	return (append_new_blk(type, blk_size(type, size)));
 }
