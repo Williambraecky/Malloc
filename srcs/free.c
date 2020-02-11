@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:07:34 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 18:56:59 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 21:38:04 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static void	insert_in_free(t_blk *blk, t_mlc *mlc)
 	mlc->checksum = hash_mlc(mlc);
 }
 
-static void	change_free_list(t_blk *blk, t_mlc *mlc)
+void		add_free_list(t_blk *blk, t_mlc *mlc)
 {
 	if (mlc < blk->first_free || !blk->first_free)
 	{
@@ -67,31 +67,30 @@ static void	change_free_list(t_blk *blk, t_mlc *mlc)
 
 static void	free_mlc(t_blk *blk, t_mlc *mlc)
 {
-	if (mlc->prev && mlc->prev->in_use == 0)
+	if (mlc->prev && mlc->prev->in_use == 0) //Case previous malloc is not allocated
 	{
-		mlc->prev->next = mlc->next; //checksum
-		mlc->prev->checksum = hash_mlc(mlc->prev);
-		if (mlc->next && mlc->next < blk->wilderness)
-		{
-			mlc->next->prev = mlc->prev; //checksum
-			mlc->next->checksum = hash_mlc(mlc->next);
-		}
 		blk->available += sizeof(t_mlc);
+		mlc->prev->next = mlc->next;
+		mlc->prev->checksum = hash_mlc(mlc->prev);
+		mlc->next->prev = mlc->prev;
+		mlc->next->checksum = hash_mlc(mlc->next);
 		mlc = mlc->prev;
 	}
-	if (mlc->next && mlc->next->in_use == 0 && mlc->next < blk->wilderness)
+	if (mlc->next < blk->wilderness && mlc->next->in_use == 0)
 	{
 		blk->available += sizeof(t_mlc);
 		mlc->next_free = mlc->next->next_free;
-		mlc->next = mlc->next->next; //checksum
+		mlc->next = mlc->next->next;
 		mlc->checksum = hash_mlc(mlc);
-		if (mlc->next)
-		{
-			mlc->next->prev = mlc; //checksum
-			mlc->next->checksum = hash_mlc(mlc->next);
-		}
+		mlc->next->prev = mlc;
+		mlc->next->checksum = hash_mlc(mlc->next);
 	}
-	change_free_list(blk, mlc);
+	if (mlc == blk->last) //TODO: test this
+	{
+		blk->wilderness = mlc;
+		blk->last = mlc->prev;
+	}
+	add_free_list(blk, mlc);
 }
 
 void		free(void *ptr)

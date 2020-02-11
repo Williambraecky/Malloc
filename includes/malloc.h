@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:05:32 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 18:11:26 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/11 21:29:40 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,5 +90,6 @@ int				get_type(size_t size);
 t_blk			*append_new_blk(int type, size_t size);
 t_blk			*get_blk_from_addr(void *ptr);
 size_t			mlc_size(t_mlc *mlc);
+void			add_free_list(t_blk *blk, t_mlc *mlc);
 
 #endif
