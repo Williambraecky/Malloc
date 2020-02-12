@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:07:34 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 22:30:59 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/12 15:03:48 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void		add_free_list(t_blk *blk, t_mlc *mlc)
 
 static void	free_mlc(t_blk *blk, t_mlc *mlc)
 {
-	if (mlc->prev && mlc->prev->in_use == 0) //Case previous malloc is not allocated
+	if (mlc->prev && mlc->prev->in_use == 0)
 	{
 		blk->available += sizeof(t_mlc);
 		mlc->prev->next = mlc->next;
@@ -85,11 +85,12 @@ static void	free_mlc(t_blk *blk, t_mlc *mlc)
 		mlc->next->prev = mlc;
 		mlc->next->checksum = hash_mlc(mlc->next);
 	}
-	// if (mlc == blk->last) //TODO: this is incorrect; do we really need to push back wilderness?
-	// {
-	// 	blk->wilderness = mlc;
-	// 	blk->last = mlc->prev;
-	// }
+	if (mlc == blk->last)
+	{
+		blk->wilderness = mlc;
+		blk->last = mlc->prev;
+		return ;
+	}
 	add_free_list(blk, mlc);
 }
 
@@ -101,12 +102,12 @@ void		free(void *ptr)
 	mlc = ptr - sizeof(t_mlc);
 	malloc_lock();
 	if (mlc->checksum != hash_mlc(mlc))
-		return malloc_unlock();//TODO: indalid checksum error message
+		return (malloc_unlock());//TODO: indalid checksum error message
 	if (mlc->in_use == 0)
-		return malloc_unlock();//TODO: double free error message
+		return (malloc_unlock());//TODO: double free error message
 	blk = get_blk_from_addr(ptr);
 	if (!blk)
-		return malloc_unlock();//TODO: could not find blk error message
+		return (malloc_unlock());//TODO: could not find blk error message
 	blk->num_alloc--;
 	if (!blk->num_alloc)
 	{

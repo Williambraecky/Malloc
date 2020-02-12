@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:06:44 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 23:20:38 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/12 15:17:24 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,16 +80,14 @@ static t_mlc	*check_free_mlc(t_blk *blk, size_t size)
 	return (NULL);
 }
 
-/*
-** TODO: check if we don't go past borders
-*/
-
 static t_mlc	*get_mlc_in_blk(t_blk *blk, size_t size)
 {
 	t_mlc		*mlc;
 
 	if ((mlc = check_free_mlc(blk, size)))
 		return (mlc);
+	if ((void*)blk->wilderness + sizeof(*mlc) + size >= (void*)blk + blk->size)
+		return (NULL);
 	mlc = blk->wilderness;
 	mlc->prev = blk->last;
 	blk->last = mlc;
@@ -105,9 +103,6 @@ static t_mlc	*get_mlc_in_blk(t_blk *blk, size_t size)
 }
 
 /*
-** TODO: define malloc type
-** TODO: get right blk
-** TODO: find the right place for it
 ** NOTE: blk might not have enough space even though there is enough total space
 */
 
@@ -115,15 +110,21 @@ void			*malloc(size_t size)
 {
 	t_blk	*blk;
 	t_mlc	*mlc;
+	int		type;
 
 	malloc_lock();
-	if ((blk = get_blk(get_type(size), size))
-		&& (mlc = get_mlc_in_blk(blk, size)))
+	blk = g_blks;
+	type = get_type(size);
+	while (blk)
 	{
-		malloc_unlock();
-		return ((void*)mlc + sizeof(*mlc));
+		if (blk->block_type == type && size < blk->available &&
+			(mlc = get_mlc_in_blk(blk, size)))
+		{
+			malloc_unlock();
+			return ((void*)mlc + sizeof(*mlc));
+		}
+		blk = blk->next;
 	}
-
 	if ((blk = append_new_blk(get_type(size), blk_size(get_type(size), size)))
 		&& (mlc = get_mlc_in_blk(blk, size)))
 	{

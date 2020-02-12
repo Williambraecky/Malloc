@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:07:28 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 23:19:55 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/12 15:14:43 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,15 +77,18 @@ static void	*realloc_bigger(t_blk *blk, t_mlc *mlc, size_t new_size)
 	t_mlc	*next;
 
 	old_size = mlc_size(mlc);
-	if (mlc->next == blk->wilderness) //easy case
+	if (mlc->next == blk->wilderness &&
+		!out_of_range(blk, mlc + sizeof(*mlc) + new_size))
 	{
 		mlc->next = (void*)mlc + sizeof(*mlc) + new_size;
 		blk->wilderness = mlc->next;
 		return ((void*)mlc + sizeof(*mlc));
 	}
 	if (mlc->next->in_use || !(new_size <= old_size + mlc_size(mlc->next)))
+	{
 		return (realloc_bigger_blk((void*)mlc + sizeof(*mlc),
 			old_size, new_size));
+	}
 	next = mlc->next;
 	mlc->next = next->next;
 	next->prev = mlc->next;
@@ -108,7 +111,7 @@ void		*realloc(void *ptr, size_t size)
 		return (ptr);//NOTE: same size don't need to do anything
 	blk = get_blk_from_addr(mlc);
 	if (size < old_size)
-		return (realloc_segment(blk, mlc, size)); //TODO: if mlc->next is wilderness we can just expand into it
+		return (realloc_segment(blk, mlc, size));
 	else if (get_type(size) > get_type(old_size))
 		return (realloc_bigger_blk(ptr, old_size, size));
 	return (realloc_bigger(blk, mlc, size));

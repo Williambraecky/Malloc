@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:05:32 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/11 22:42:58 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/12 15:09:45 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,5 +106,6 @@ void				add_free_list(t_blk *blk, t_mlc *mlc);
 void				ft_putstr(char *str);
 void				ft_putstr_fd(char *str, int fd);
 void				ft_putsizet(size_t nbr);
+int					out_of_range(t_blk *blk, void *ptr);
 
 #endif
