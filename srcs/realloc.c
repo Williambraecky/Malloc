@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:07:28 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/12 15:14:43 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/12 16:03:23 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,30 @@ static void	*realloc_bigger_blk(void *ptr, size_t size, size_t new_size)
 	return (new_ptr);
 }
 
+static void	remove_mlc_from_free_list(t_blk *blk, t_mlc *mlc)
+{
+	t_mlc	*curr;
+	t_mlc	*prev_free;
+
+	curr = blk->first_free;
+	if (curr == mlc)
+	{
+		blk->first_free = curr->next_free;
+		return ;
+	}
+	while (curr)
+	{
+		if (curr == mlc)
+		{
+			if (prev_free)
+				prev_free->next_free = mlc->next_free;
+			return ;
+		}
+		prev_free = curr;
+		curr = curr->next_free;
+	}
+}
+
 /*
 ** NOTE: try to expand mlc, this can only work if mlc->next
 **    is not in use or if it is wilderness
@@ -89,6 +113,7 @@ static void	*realloc_bigger(t_blk *blk, t_mlc *mlc, size_t new_size)
 		return (realloc_bigger_blk((void*)mlc + sizeof(*mlc),
 			old_size, new_size));
 	}
+	remove_mlc_from_free_list(blk, mlc->next);
 	next = mlc->next;
 	mlc->next = next->next;
 	next->prev = mlc->next;
@@ -110,6 +135,8 @@ void		*realloc(void *ptr, size_t size)
 	if (old_size == size)
 		return (ptr);//NOTE: same size don't need to do anything
 	blk = get_blk_from_addr(mlc);
+	if (!blk)
+		return (NULL);
 	if (size < old_size)
 		return (realloc_segment(blk, mlc, size));
 	else if (get_type(size) > get_type(old_size))
