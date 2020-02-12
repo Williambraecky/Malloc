@@ -6,7 +6,7 @@
 /*   By: wbraeckm <wbraeckm@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/02/11 14:06:44 by wbraeckm          #+#    #+#             */
-/*   Updated: 2020/02/12 15:17:24 by wbraeckm         ###   ########.fr       */
+/*   Updated: 2020/02/12 15:27:35 by wbraeckm         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void			*malloc(size_t size)
 	malloc_lock();
 	blk = g_blks;
 	type = get_type(size);
-	while (blk)
+	while (blk && type != LARGE)
 	{
 		if (blk->block_type == type && size < blk->available &&
 			(mlc = get_mlc_in_blk(blk, size)))
